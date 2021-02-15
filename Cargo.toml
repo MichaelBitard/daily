@@ -1,0 +1,14 @@
+[package]
+name = "daily"
+version = "0.1.0"
+authors = ["Bitard Michaël <bitard.michael@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = "3.0.0-beta.2"
+clap_generate = "3.0.0-beta.2"
+simple_logger = "1.11.0"
+log = "0.4.14"
+chrono = "0.4.19"
