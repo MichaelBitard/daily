@@ -1,6 +1,7 @@
 mod daily;
+extern crate term;
 
-use crate::daily::add_line;
+use crate::daily::{add_line, get_daily_content};
 use clap::{crate_description, crate_name, crate_version, App, Arg, ArgSettings};
 use clap_generate::{
     generate,
@@ -8,6 +9,7 @@ use clap_generate::{
 };
 use simple_logger::SimpleLogger;
 use std::io;
+use term::Attr;
 
 fn main() {
     let crate_name = crate_name!();
@@ -37,7 +39,8 @@ fn main() {
                     .takes_value(true)
                     .about("add a text line to your daily notes"),
             ),
-        );
+        )
+        .subcommand(App::new("show").about("Show a daily"));
     let matches = &app.get_matches_mut();
     let level = match matches.occurrences_of("verbose") {
         0 => log::LevelFilter::Error,
@@ -63,6 +66,17 @@ fn main() {
                 }
             },
             None => log::debug!("No text provided"),
+        }
+    } else if let Some(ref _matches) = matches.subcommand_matches("show") {
+        match get_daily_content() {
+            None => log::debug!("No daily content"),
+            Some(content) => {
+                let mut my_term = term::stdout().unwrap();
+                my_term.attr(Attr::Bold).unwrap();
+                writeln!(my_term, "Daily").unwrap();
+                my_term.reset().unwrap();
+                write!(my_term, "{}", content).unwrap();
+            }
         }
     } else {
         app.print_help().unwrap();
